@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tripreader.member.model.mapper.MemberMapper">
+
+	<resultMap type="memberDto" id="member">
+		<result column="member_key" property="memberKey"/>
+		<result column="id" property="id"/>
+		<result column="password" property="password"/>
+		<result column="name" property="name"/>
+		<result column="email" property="email"/>
+		<result column="area_code" property="areaCode"/>
+		<result column="sigungu_code" property="sigunguCode"/>
+		<result column="birth" property="birth"/>
+		<result column="mailing" property="mailing"/>
+		<result column="authority" property="authority"/>
+		<result column="enabled" property="enabled"/>
+	</resultMap>
+
+	<insert id="join" parameterType="memberDto">
+		insert into member(id,password,name,email,area_code,sigungu_code,birth,mailing)
+		values(#{id},#{password},#{name},#{email},#{areaCode},#{sigunguCode},#{birth},#{mailing})
+	</insert>
+
+	<select id="login" parameterType="memberDto" resultMap="member">
+		select id, name
+		from member
+		where id=#{id} and password=#{password} and enabled = 1
+	</select>
+
+	<update id="update" parameterType="memberDto">
+		update member set password = #{password}, name = #{name},email = #{email},area_code = #{areaCode},sigungu_code = #{sigunguCode},birth = #{birth}, mailing=#{mailing}
+		where id=#{id} and enabled = 1
+	</update>
+
+	<update id="delete" parameterType="String">
+		update member set enabled = 0
+		where id=#{id} and enabled = 1
+	</update>
+
+	<select id="idValidation" parameterType="String" resultType="int">
+		select count(id)
+		from member
+		where id = #{id}
+	</select>
+
+	<select id="getMemberInfo" parameterType="String" resultMap="member">
+		select id, name, email, area_code, sigungu_code, birth, mailing
+		from member
+		where id = #{id} and enabled = 1
+	</select>
+
+	<select id="getMemberById" parameterType="String" resultMap="member">
+		select *
+		from member
+		where id = #{id} and enabled = 1
+	</select>
+
+</mapper>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.tripreader.festival.model.mapper.FestivalMapper">
+    <resultMap id="festivalEvents" type="festivalEventsDto">
+        <result column="festival_events_key" property="festivalEventsKey"/>
+        <result column="contentid" property="contentid"/>
+        <result column="contenttypeid" property="contenttypeid"/>
+        <result column="eventstartdate" property="eventstartdate"/>
+        <result column="eventenddate" property="eventenddate"/>
+        <result column="title" property="title"/>
+        <result column="overview" property="overview"/>
+        <result column="addr1" property="addr1"/>
+        <result column="addr2" property="addr2"/>
+        <result column="area_code" property="areaCode"/>
+        <result column="sigungu_code" property="sigunguCode"/>
+        <result column="firstimage" property="firstimage"/>
+        <result column="firstimage2" property="firstimage2"/>
+        <result column="mapx" property="mapx"/>
+        <result column="mapy" property="mapy"/>
+        <result column="tel" property="tel"/>
+        <result column="sponsor1" property="sponsor1"/>
+        <result column="sponsor1tel" property="sponsor1tel"/>
+        <result column="sponsor2" property="sponsor2"/>
+        <result column="sponsor2tel" property="sponsor2tel"/>
+        <result column="playtime" property="playtime"/>
+        <result column="eventplace" property="eventplace"/>
+        <result column="eventhomepage" property="eventhomepage"/>
+        <result column="agelimit" property="agelimit"/>
+        <result column="bookingplace" property="bookingplace"/>
+        <result column="placeinfo" property="placeinfo"/>
+        <result column="subevent" property="subevent"/>
+        <result column="program" property="program"/>
+        <result column="usetimefestival" property="usetimefestival"/>
+        <result column="discountinfofestival" property="discountinfofestival"/>
+        <result column="spendtimefestival" property="spendtimefestival"/>
+        <result column="festivalgrade" property="festivalgrade"/>
+        <result column="createdtime" property="createdtime"/>
+        <result column="modifiedtime" property="modifiedtime"/>
+    </resultMap>
+
+    <resultMap id="FestivalListResponseDto" type="FestivalListResponseDto">
+        <result column="contentid" property="contentid"/>
+        <result column="contenttypeid" property="contenttypeid"/>
+        <result column="eventstartdate" property="eventstartdate"/>
+        <result column="eventenddate" property="eventenddate"/>
+        <result column="title" property="title"/>
+        <result column="overview" property="overview"/>
+        <result column="addr1" property="addr1"/>
+        <result column="addr2" property="addr2"/>
+        <result column="firstimage" property="image"/>
+    </resultMap>
+
+    <!-- 날짜 리스트를 기반으로 이벤트 개수 조회 -->
+    <select id="getFestivalCount" resultType="int">
+        SELECT COUNT(*)
+        FROM festival_events
+        WHERE eventstartdate &lt;= #{date}
+        AND eventenddate &gt;= #{date};
+    </select>
+
+    <select id="getFestivalDetail" parameterType="int" resultMap="festivalEvents">
+        SELECT *
+        FROM festival_events
+        WHERE contentid = #{contentId};
+    </select>
+
+    <select id="getFestivalList" resultMap="FestivalListResponseDto" parameterType="map">
+        SELECT contentid, eventstartdate, eventenddate, title, overview, addr1, addr2, firstimage
+        FROM festival_events
+        WHERE eventstartdate &lt;= #{date}
+        AND eventenddate &gt;= #{date}
+        <if test="areaCode != 0">
+            AND area_code = #{areaCode}
+            <if test="sigunguCode != 0">
+                AND sigungu_code = #{sigunguCode}
+            </if>
+        </if>
+        ORDER BY eventenddate
+        LIMIT #{limit} OFFSET #{offset};
+    </select>
+</mapper>

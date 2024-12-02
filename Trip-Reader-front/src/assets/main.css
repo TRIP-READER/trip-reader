@@ -1,0 +1,105 @@
+@font-face {
+  font-family: "pyeongchang-bold";
+  /* src: url("@/assets/fonts/PyeongChang-Bold.ttf") format("truetype"); */
+  src: url("@/assets/fonts/Hankengrotesk.ttf") format("truetype");
+}
+@font-face {
+  font-family: "pyeongchang-regular";
+  /* src: url("@/assets/fonts/PyeongChang-Regular.ttf") format("truetype"); */
+  src: url("@/assets/fonts/Hankengrotesk.ttf") format("truetype");
+}
+
+@font-face {
+  font-family: "pcr";
+  src: url("@/assets/fonts/PyeongChang-Regular.ttf") format("truetype");
+  /* src: url("@/assets/fonts/Hankengrotesk.ttf") format("truetype"); */
+}
+
+@font-face {
+  font-family: "bookk-bold";
+  /* src: url("@/assets/fonts/BookkMyungjo_Bold.ttf") format("truetype"); */
+  src: url("@/assets/fonts/FlightSans-Bold.ttf") format("truetype");
+}
+@font-face {
+  font-family: "bookk-light";
+  /* src: url("@/assets/fonts/BookkMyungjo_Light.ttf") format("truetype"); */
+  src: url("@/assets/fonts/FlightSans-Bold.ttf") format("truetype");
+}
+@font-face {
+  font-family: "flightsans-bold";
+  src: url("@/assets/fonts/FlightSans-Bold.ttf") format("truetype");
+}
+@font-face {
+  font-family: "flightsans-regular";
+  src: url("@/assets/fonts/Flightsans-Regular.ttf") format("truetype");
+}
+@font-face {
+  font-family: "flightsans-Title";
+  src: url("@/assets/fonts/Flightsans-Title.ttf") format("truetype");
+}
+@font-face {
+  font-family: "hankengrotesk";
+  src: url("@/assets/fonts/Hankengrotesk.ttf") format("truetype");
+}
+@font-face {
+  font-family: "nanumgothic";
+  src: url("@/assets/fonts/NanumGothic.ttf") format("truetype");
+}
+@font-face {
+  font-family: "nanumgothic-light";
+  src: url("@/assets/fonts/NanumGothicLight.ttf") format("truetype");
+}
+@font-face {
+  font-family: "nanumgothic-bold";
+  src: url("@/assets/fonts/NanumGothicBold.ttf") format("truetype");
+}
+@font-face {
+  font-family: "nanumgothic-ebold";
+  src: url("@/assets/fonts/NanumGothicExtraBold.ttf") format("truetype");
+}
+body {
+  margin: 0;
+}
+
+.tr-font-pc-b {
+  font-family: "pyeongchang-bold";
+}
+.tr-font-pc-r {
+  font-family: "pyeongchang-regular";
+}
+.tr-font-bkk-b {
+  font-family: "bookk-bold";
+}
+.tr-font-bkk-l {
+  font-family: "bookk-light";
+}
+
+.hanken-grotesk-title {
+  font-family: "hankengrotesk";
+  font-optical-sizing: auto;
+  letter-spacing: -0.32rem;
+}
+.hanken-grotesk-content {
+  font-family: "hankengrotesk";
+  font-optical-sizing: auto;
+}
+
+/* 노이즈 필터가 적용된 이미지 */
+.image-filter {
+  filter: brightness(1.2) contrast(0.9) saturate(0.8) sepia(0.3) hue-rotate(-10deg);
+  position: relative;
+}
+
+/* 노이즈를 위한 오버레이 */
+.image-filter::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAFhAKrJRxF1wAAAABJRU5ErkJggg=="); /* 노이즈 패턴 */
+  opacity: 0.15; /* 노이즈 강도 */
+  mix-blend-mode: overlay;
+}

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tripreader.attraction.model.mapper.AttractionMapper">
+	<resultMap id="festivalEvents" type="festivalEventsDto">
+		<result column="festival_events_key" property="festivalEventsKey"/>
+		<result column="contentid" property="contentid"/>
+		<result column="contenttypeid" property="contenttypeid"/>
+		<result column="eventstartdate" property="eventstartdate"/>
+		<result column="eventenddate" property="eventenddate"/>
+		<result column="title" property="title"/>
+		<result column="overview" property="overview"/>
+		<result column="addr1" property="addr1"/>
+		<result column="addr2" property="addr2"/>
+		<result column="area_code" property="areaCode"/>
+		<result column="sigungu_code" property="sigunguCode"/>
+		<result column="firstimage" property="firstimage"/>
+		<result column="firstimage2" property="firstimage2"/>
+		<result column="mapx" property="mapx"/>
+		<result column="mapy" property="mapy"/>
+		<result column="tel" property="tel"/>
+		<result column="sponsor1" property="sponsor1"/>
+		<result column="sponsor1tel" property="sponsor1tel"/>
+		<result column="sponsor2" property="sponsor2"/>
+		<result column="sponsor2tel" property="sponsor2tel"/>
+		<result column="playtime" property="playtime"/>
+		<result column="eventplace" property="eventplace"/>
+		<result column="eventhomepage" property="eventhomepage"/>
+		<result column="agelimit" property="agelimit"/>
+		<result column="bookingplace" property="bookingplace"/>
+		<result column="placeinfo" property="placeinfo"/>
+		<result column="subevent" property="subevent"/>
+		<result column="program" property="program"/>
+		<result column="usetimefestival" property="usetimefestival"/>
+		<result column="discountinfofestival" property="discountinfofestival"/>
+		<result column="spendtimefestival" property="spendtimefestival"/>
+		<result column="festivalgrade" property="festivalgrade"/>
+		<result column="createdtime" property="createdtime"/>
+		<result column="modifiedtime" property="modifiedtime"/>
+	</resultMap>
+
+	<!-- SELECT: 관광지 정보 존재 여부 확인 -->
+	<select id="existsAttractions" parameterType="int" resultType="boolean">
+		SELECT EXISTS(SELECT 1 FROM attractions WHERE contentid = #{contentid})
+	</select>
+
+	<!-- SELECT: 문화시설 정보 존재 여부 확인 -->
+	<select id="existsCulturalFacilities" parameterType="int" resultType="boolean">
+		SELECT EXISTS(SELECT 1 FROM cultural_facilities WHERE contentid = #{contentid})
+	</select>
+
+	<!-- SELECT: 축제/공연/행사 정보 존재 여부 확인 -->
+	<select id="existsFestivalEvents" parameterType="int" resultType="boolean">
+		SELECT EXISTS(SELECT 1 FROM festival_events WHERE contentid = #{contentid})
+	</select>
+
+	<!-- SELECT: 관광지 정보 조회 -->
+	<select id="getAttractions" parameterType="int" resultType="attractionsDto">
+		SELECT * FROM attractions
+		WHERE contentid = #{contentid}
+	</select>
+
+	<!-- SELECT: 문화시설 정보 조회 -->
+	<select id="getCulturalFacilities" parameterType="int" resultType="culturalFacilitiesDto">
+		SELECT * FROM cultural_facilities
+		WHERE contentid = #{contentid}
+	</select>
+
+	<!-- SELECT: 축제/공연/행사 정보 조회 -->
+	<select id="getFestivalEvents" parameterType="int" resultMap="festivalEvents">
+		SELECT * FROM festival_events
+		WHERE contentid = #{contentid}
+	</select>
+
+	<!-- SELECT: 축제/공연/행사 정보 조회 -->
+	<select id="getAllFestivals" parameterType="int" resultMap="festivalEvents">
+		SELECT * FROM festival_events
+		         order by contentid
+		LIMIT #{page}, 50;
+	</select>
+
+	<!-- INSERT: 관광지 데이터 추가 -->
+	<insert id="insertAttraction" parameterType="attractionsDto">
+		INSERT INTO attractions (
+			contentid, contenttypeid, title, addr1, addr2, area_code, createdtime, modifiedtime, firstimage, firstimage2,
+			mapx, mapy, sigungu_code, tel, infocenter, opendate, restdate, expguide, expagerange, accomcount, useseason,
+			usetime, parking
+		)
+		VALUES (
+				   #{contentid},
+				   #{contenttypeid},
+				   #{title},
+				   #{addr1},
+				   #{addr2},
+				   #{areaCode},
+				   #{createdtime},
+				   #{modifiedtime},
+				   #{firstimage},
+				   #{firstimage2},
+				   #{mapx},
+				   #{mapy},
+				   #{sigunguCode},
+				   #{tel},
+				   #{infocenter},
+				   #{opendate},
+				   #{restdate},
+				   #{expguide},
+				   #{expagerange},
+				   #{accomcount},
+				   #{useseason},
+				   #{usetime},
+				   #{parking}
+			   )
+	</insert>
+
+	<!-- INSERT: 문화시설 데이터 추가 -->
+	<insert id="insertCulturalFacility" parameterType="culturalFacilitiesDto">
+		INSERT INTO cultural_facilities (
+			contentid, contenttypeid, title, addr1, addr2, area_code, createdtime, modifiedtime, firstimage, firstimage2,
+			mapx, mapy, sigungu_code, tel, scale, usefee, discountinfo, spendtime, parkingfee, infocenterculture,
+			accomcountculture, usetimeculture, restdateculture, parkingculture
+		)
+		VALUES (
+				   #{contentid},
+				   #{contenttypeid},
+				   #{title},
+				   #{addr1},
+				   #{addr2},
+				   #{areaCode},
+				   #{createdtime},
+				   #{modifiedtime},
+				   #{firstimage},
+				   #{firstimage2},
+				   #{mapx},
+				   #{mapy},
+				   #{sigunguCode},
+				   #{tel},
+				   #{scale},
+				   #{usefee},
+				   #{discountinfo},
+				   #{spendtime},
+				   #{parkingfee},
+				   #{infocenterculture},
+				   #{accomcountculture},
+				   #{usetimeculture},
+				   #{restdateculture},
+				   #{parkingculture}
+			   )
+	</insert>
+
+	<!-- INSERT: 축제/공연/행사 데이터 추가 -->
+	<insert id="insertFestivalEvent" parameterType="festivalEventsDto">
+		INSERT INTO festival_events (
+			contentid, contenttypeid, title, addr1, addr2, area_code, createdtime, modifiedtime, firstimage, firstimage2,
+			mapx, mapy, sigungu_code, tel, sponsor1, sponsor1tel, sponsor2, sponsor2tel, eventenddate, playtime, eventplace,
+			eventhomepage, agelimit, bookingplace, placeinfo, subevent, program, eventstartdate, usetimefestival,
+			discountinfofestival, spendtimefestival, festivalgrade, overview
+		)
+		VALUES (
+				   #{contentid},
+				   #{contenttypeid},
+				   #{title},
+				   #{addr1},
+				   #{addr2},
+				   #{areaCode},
+				   #{createdtime},
+				   #{modifiedtime},
+				   #{firstimage},
+				   #{firstimage2},
+				   #{mapx},
+				   #{mapy},
+				   #{sigunguCode},
+				   #{tel},
+				   #{sponsor1},
+				   #{sponsor1tel},
+				   #{sponsor2},
+				   #{sponsor2tel},
+				   #{eventenddate},
+				   #{playtime},
+				   #{eventplace},
+				   #{eventhomepage},
+				   #{agelimit},
+				   #{bookingplace},
+				   #{placeinfo},
+				   #{subevent},
+				   #{program},
+				   #{eventstartdate},
+				   #{usetimefestival},
+				   #{discountinfofestival},
+				   #{spendtimefestival},
+				   #{festivalgrade},
+				   #{overview}
+			   )
+	</insert>
+
+</mapper>

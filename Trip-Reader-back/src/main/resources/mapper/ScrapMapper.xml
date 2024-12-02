@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tripreader.news.model.mapper.ScrapMapper">
+
+    <resultMap type="newsSummaryDto" id="newsSummary">
+        <result column="news_summary_key" property="newsSummaryKey"/>
+        <result column="news_summary_nano" property="newsSummaryNano"/>
+        <result column="contentid" property="contentid"/>
+        <result column="contenttypeid" property="contenttypeid"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="scrap_count" property="scrapCount"/>
+        <result column="image" property="image"/>
+        <result column="area_code" property="areaCode"/>
+        <result column="sigungu_code" property="sigunguCode"/>
+        <result column="created_time" property="createdTime"/>
+    </resultMap>
+
+
+    <select id="getScrap" parameterType="int" resultMap="newsSummary">
+        SELECT
+            *
+        FROM
+            news_summary ns
+                INNER JOIN
+            member_scrap ms ON ns.news_summary_key = ms.news_summary_key
+        WHERE
+            ms.member_key = #{memberKey}
+    </select>
+
+
+    <delete id="deleteScrap" parameterType="map">
+    delete
+    from member_scrap
+    where member_scrap.member_key = #{memberKey} and news_summary_key = #{newsSummaryKey}
+    </delete>
+
+    <insert id="insertScrap" parameterType="map">
+    insert into member_scrap(member_key, news_summary_key)
+    value(#{memberKey},#{newsSummaryKey});
+    </insert>
+
+    <select id="isScraped" parameterType="map" resultType="int">
+            select count(*)
+            from member_scrap
+            where member_key = #{memberKey} and news_summary_key = #{newsSummaryKey};
+    </select>
+
+</mapper>

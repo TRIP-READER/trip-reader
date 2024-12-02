@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tripreader.notice.model.mapper.NoticeMapper">
+
+    <resultMap type="noticeResponseDto" id="Notice">
+        <result column="notice_nano" property="noticeNano"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="created_time" property="prettyTime"/>
+        <result column="image" property="image"/>
+    </resultMap>
+
+    <select id="getNoticeList" parameterType="int" resultMap="Notice">
+        SELECT
+            notice_nano,
+            title,
+            content,
+            created_time,
+            image
+        FROM
+            notice
+        ORDER BY created_time DESC
+        LIMIT #{pageno}, 5
+    </select>
+
+    <select id="getNotice" parameterType="String" resultMap="Notice">
+        SELECT
+            notice_nano,
+            title,
+            content,
+            created_time,
+            image
+        FROM
+            notice
+        WHERE notice_nano = #{noticeNano}
+    </select>
+
+    <insert id="addNotice" parameterType="map">
+        INSERT INTO notice(notice_nano, title, content, image)
+        VALUES(#{noticeNano}, #{title}, #{content}, #{image})
+    </insert>
+
+    <update id="updateNotice" parameterType="map">
+        UPDATE notice
+        SET title = #{title}, content = #{content}, image = #{image}
+        WHERE notice_nano = #{noticeNano}
+    </update>
+
+    <delete id="deleteNotice" parameterType="String">
+        DELETE FROM notice
+        WHERE notice_nano = #{noticeNano}
+    </delete>
+
+
+</mapper>

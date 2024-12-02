@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tripreader.news.model.mapper.NewsMapper">
+
+	<resultMap type="newsDto" id="news">
+		<result column="news_key" property="newsKey"/>
+		<result column="url" property="url"/>
+		<result column="title" property="title"/>
+		<result column="content" property="content"/>
+		<result column="news_summary_key" property="newsSummaryKey"/>
+	</resultMap>
+
+	<resultMap type="newsSummaryDto" id="newsSummary">
+		<result column="news_summary_key" property="newsSummaryKey"/>
+		<result column="news_summary_nano" property="newsSummaryNano"/>
+		<result column="contentid" property="contentid"/>
+		<result column="contenttypeid" property="contenttypeid"/>
+		<result column="title" property="title"/>
+		<result column="dark_title" property="darkTitle"/>
+
+		<result column="content" property="content"/>
+		<result column="scrap_count" property="scrapCount"/>
+		<result column="image" property="image"/>
+		<result column="area_code" property="areaCode"/>
+		<result column="sigungu_code" property="sigunguCode"/>
+		<result column="created_time" property="createdTime"/>
+	</resultMap>
+
+	<resultMap type="newsVideoDto" id="newsVideo">
+		<result column="attraction_video_key" property="attractionVideoKey"/>
+		<result column="news_summary_key" property="newsSummaryKey"/>
+		<result column="url" property="url"/>
+	</resultMap>
+
+	<resultMap type="newsSummaryMainDto" id="newsSummaryMain">
+		<result column="news_summary_main_key" property="newsSummaryMainKey"/>
+		<result column="news_summary_main_nano" property="newsSummaryMainNano"/>
+		<result column="section" property="section"/>
+		<result column="section_order" property="sectionOrder"/>
+	</resultMap>
+
+	<resultMap type="NewsSummaryMainResponseDto" id="NewsSummaryMainResponseDto">
+		<result column="news_summary_nano" property="newsSummaryNano"/>
+		<result column="title" property="title"/>
+		<result column="content" property="content"/>
+		<result column="image" property="image"/>
+	</resultMap>
+
+	<update id="updateNewsSummary" parameterType="newsSummaryDto">
+		update news_summary
+		set content = #{content}
+		where news_summary_key = #{newsSummaryKey}
+	</update>
+
+	<insert id="insertNews" parameterType="java.util.List">
+		insert into news(url,title, content ,news_summary_key)
+		values
+		<foreach collection="list" item="item" separator=",">
+			(#{item.url}, #{item.title},#{item.content}, #{item.newsSummaryKey})
+		</foreach>
+	</insert>
+
+	<insert id="insertNewsVideo" parameterType="java.util.List">
+		insert into attraction_video(news_summary_key,url)
+		values
+		<foreach collection="list" item="item" separator=",">
+		    (#{item.newsSummaryKey},#{item.url})
+		</foreach>
+	</insert>
+
+	<insert id="insertNewsSummary" parameterType="newsSummaryDto">
+		insert into news_summary(contentid,contenttypeid,area_code,sigungu_code,title,dark_title,content,image,news_summary_nano)
+		values(#{contentid}, #{contenttypeid}, #{areaCode}, #{sigunguCode}, #{title},#{darkTitle}, #{content}, #{image}, #{newsSummaryNano})
+		<selectKey resultType="int" keyProperty="newsSummaryKey" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+	</insert>
+
+	<select id="getNewsSummaryByContentInfo" parameterType="map" resultMap="newsSummary">
+		select *
+		from news_summary
+		where contentid = #{contentid} and contenttypeid = #{contenttype}
+	</select>
+
+	<select id="getNewsSummaryById" parameterType="int" resultMap="newsSummary">
+		select *
+		from news_summary
+		where news_summary_key = #{newsSummaryKey}
+	</select>
+
+	<select id="getNewsSummaryByNano" parameterType="String" resultMap="newsSummary">
+		select *
+		from news_summary
+		where news_summary_nano = #{newsSummaryNano}
+	</select>
+
+	<select id="getNewsSummaryList" parameterType="map" resultMap="newsSummary">
+		select *
+		from news_summary
+	</select>
+
+	<select id="getNewsSummaryCnt" parameterType="map" resultType="int">
+		select count(news_summary_key)
+		from news_summary
+		where contentid = #{contentid} and contenttypeid = #{contenttype}
+	</select>
+
+	<select id="getNewsSummaryListByAddr" parameterType="map" resultMap="newsSummary">
+		SELECT
+		ns.news_summary_key,
+		ns.contentid,
+		ns.contenttypeid,
+		ns.title,
+		ns.content,
+		ns.image,
+		ns.scrap_count,
+		ns.created_time
+		FROM
+		news_summary ns
+		JOIN
+		festival_events f ON ns.contentid = f.contentid AND f.areacode = #{sidoCode}
+		<if test="gugunCode != null">
+			JOIN
+			guguns g ON f.sigungucode = g.gugun_code AND g.guguns_key = #{gugunCode}
+		</if>
+	</select>
+
+	<select id="getNewsSummaryKeyByNewsSummaryNano" parameterType="String" resultType="int">
+		select news_summary_key
+		from news_summary
+		where news_summary_nano = #{newsSummaryNano}
+	</select>
+
+	<select id="getNewsSummaryPreviewList" parameterType="map" resultMap="newsSummary">
+		SELECT *
+		FROM news_summary
+		WHERE 1=1
+		<if test="area_code != 0">
+			AND area_code = #{area_code}
+			<if test="sigungu_code != 0">
+				AND sigungu_code = #{sigungu_code}
+			</if>
+		</if>
+
+		ORDER BY
+		<choose>
+			<when test="sorting == 'like'">
+				scrap_count DESC, created_time DESC
+			</when>
+			<otherwise>
+				created_time DESC
+			</otherwise>
+		</choose>
+		LIMIT #{limit} OFFSET #{offset};
+	</select>
+
+	<update id="updateScrapCnt" parameterType="map">
+		update news_summary
+		set scrap_count = scrap_count + #{scrapCountChange}
+		where news_summary_key = #{newsSummaryKey}
+	</update>
+	<update id="updateDarkTitle" parameterType="map">
+		update news_summary
+		set dark_title = #{darkTitle}
+		where news_summary_key = #{newsSummaryKey}
+	</update>
+
+	<select id="getScrapCount" parameterType="int" resultType="int">
+		select scrap_count
+		from news_summary
+		where news_summary_key = #{newsSummaryKey}
+	</select>
+
+	<insert id="insertMainNews" parameterType="java.util.List">
+		insert into news_summary_main(section,section_order,news_summary_nano)
+		values
+		<foreach collection="list" item="newsSummaryMainDto" separator=",">
+			(#{newsSummaryMainDto.section}, #{newsSummaryMainDto.sectionOrder}, #{newsSummaryMainDto.newsSummaryNano})
+		</foreach>
+	</insert>
+	<select id="getNewsVideo" parameterType="int" resultType="newsSummaryDetailVideoDto">
+		select *
+		from attraction_video
+		where news_summary_key = #{newsSummaryKey}
+	</select>
+
+	<select id="getMainNews" resultMap="NewsSummaryMainResponseDto">
+		select *
+		from news_summary
+		limit 8;
+	</select>
+
+	<select id="getNewsInfo" parameterType="int" resultType="newsSummaryDetailNewsInfoDto">
+		select *
+		from news
+		where news_summary_key = #{newsSummaryKey}
+	</select>
+</mapper>
