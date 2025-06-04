@@ -5,7 +5,7 @@
 </div>
 
 - 프로젝트 기간 : 2024.11.02 - 2024.11.26
-- 팀원 : @wavewwave20(박하민) @heo-hyunjun(허현준)
+- 팀원 : @wavewwave20(박하민) @heo-hyunjun(허현준) 
 
 <br />
 
